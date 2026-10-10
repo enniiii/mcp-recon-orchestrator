@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "recon-orchestrator": {
+      "command": "uv",
+      "args": ["run", "python", "-m", "recon.servers.orchestrator_server"]
+    }
+  }
+}
