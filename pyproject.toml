@@ -5,6 +5,7 @@ description = "A safety-first MCP toolkit that exposes network recon tools (nmap
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "dnspython>=2.9.0",
     "mcp[cli]>=2.3.0",
 ]
 
@@ -23,4 +24,7 @@ packages = ["src/recon"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
-addopts = "-ra"
+addopts = '-ra -m "not integration"'
+markers = [
+    "integration: needs real scanners + the Docker lab; run inside the lab container",
+]
