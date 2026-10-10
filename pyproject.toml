@@ -1,0 +1,26 @@
+[project]
+name = "mcp-recon-orchestrator"
+version = "0.1.0"
+description = "A safety-first MCP toolkit that exposes network recon tools (nmap, nuclei, OSINT) to AI agents, gated behind a strict target allowlist. Authorized targets only."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "mcp[cli]>=2.3.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/recon"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
