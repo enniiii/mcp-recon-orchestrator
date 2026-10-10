@@ -1,0 +1,42 @@
+# Local recon lab: a vulnerable demo app plus the toolkit, on an isolated
+# bridge network. The recon container's allowlist is scoped to this network
+# and the "juiceshop" service name, so scans cannot escape the lab.
+#
+#   docker compose up -d --build
+#   docker compose exec recon pytest -m integration
+#   docker compose exec recon python -m recon.servers.nmap_server   # MCP stdio
+#
+# WARNING: Juice Shop is intentionally vulnerable. Keep it on this internal
+# network only; it is not published to the host.
+
+services:
+  juiceshop:
+    image: bkimminich/juice-shop:latest
+    container_name: recon-juiceshop
+    restart: unless-stopped
+    networks:
+      lab:
+        ipv4_address: 172.28.0.10
+    # Deliberately NOT published to the host (no `ports:`).
+
+  recon:
+    build: .
+    container_name: recon-toolkit
+    depends_on:
+      - juiceshop
+    environment:
+      # The allowlist authorizes only the lab: loopback is implicit, plus the
+      # juiceshop service name and this network's subnet.
+      RECON_ALLOWED_HOSTS: "juiceshop,localhost"
+      RECON_ALLOWED_NETWORKS: "172.28.0.0/16"
+      RECON_TARGET: "juiceshop"
+      RECON_TARGET_PORT: "3000"
+    networks:
+      - lab
+
+networks:
+  lab:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
